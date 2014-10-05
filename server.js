@@ -1,7 +1,8 @@
 var express = require('express');
 	mongoose = require('mongoose'),
 	handlebars = require('express-handlebars'),
-	autoIncrement = require('mongoose-auto-increment');
+	autoIncrement = require('mongoose-auto-increment'),
+	lessMiddleware = require('less-middleware');
 
 var config = require('./config')();
 
@@ -12,6 +13,10 @@ app.configure(function() {
 	app.use(express.logger('dev'));
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
+	app.use(lessMiddleware({
+		src: __dirname + '/public',
+		compress: true
+	}));
 });
 
 app.engine('handlebars', handlebars({defaultLayout: 'main'}));

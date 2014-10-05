@@ -5,7 +5,8 @@
 	"repository": "https://github.com/brobo/contestwebsite",
 	"dependencies": {
 		"express": "3.6.*",
-		"express-handlebars": "1.1.*",		
+		"express-handlebars": "1.1.*",
+		"less-middleware": "1.0.*",
 		"mongoose": "3.8.*",
 		"mongoose-auto-increment": "*"
 	}
