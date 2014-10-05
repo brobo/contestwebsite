@@ -34,3 +34,8 @@ node_modules
 ### Bower ###
 bower_components
 
+#Eclipse Specific
+.jshintrc
+.project
+.settings
+
