@@ -1,8 +1,9 @@
+var rek = require('rekuire');
 var mongoose = require('mongoose');
 var autoIncrement = require('mongoose-auto-increment');
 var Schema = mongoose.Schema;
 
-var Pizza = require('./pizza.js');
+var Pizza = rek('pizza.model.js');
 
 var teamSchema = new Schema({
 	number: Number,

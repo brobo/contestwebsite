@@ -1,4 +1,5 @@
-var Team = require('../../models/team');
+var rek = require('rekuire');
+var Team = rek('team.model.js');
 
 module.exports = function(app) {
 

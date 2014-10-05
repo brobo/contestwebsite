@@ -1,4 +1,5 @@
-var Problem = require('../../models/problem');
+var rek = require('rekuire');
+var Problem = rek('problem.model.js');
 
 module.exports = function(app) {
 

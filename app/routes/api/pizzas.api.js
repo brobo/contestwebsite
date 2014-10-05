@@ -1,4 +1,5 @@
-var Pizza = require('../../models/pizza');
+var rek = require('rekuire');
+var Pizza = rek('pizza.model.js');
 
 module.exports = function(app) {
 
