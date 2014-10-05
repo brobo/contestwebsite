@@ -6,4 +6,4 @@ var pizzaSchema = new Schema({
 	price: Number
 });
 
-module.exports = mongoose.model('pizzas', pizzaSchema);
+module.exports = mongoose.model('Pizza', pizzaSchema);
