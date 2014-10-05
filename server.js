@@ -10,11 +10,11 @@ var config = rek('app/config')();
 var app = express();
 
 app.configure(function() {
+	app.use(lessMiddleware(__dirname + '/public', { force: true })); //TODO: Disable force for production
 	app.use(express.static(__dirname + '/public'));
 	app.use(express.logger('dev'));
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
-	app.use(lessMiddleware(__dirname + '/public'));
 });
 
 app.engine('handlebars', handlebars({defaultLayout: 'main'}));
