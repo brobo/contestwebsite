@@ -5,6 +5,7 @@ module.exports = function(app) {
 	rek('pizzas.api.js')(app);
 	rek('teams.api.js')(app);
 	rek('problems.api.js')(app);
+	rek('submissions.api.js')(app);
 
 	app.get('/', function(req, res) {
       res.render('home', {'name' : 'Samuel Jones'});

@@ -7,12 +7,3 @@ var appealsSchema = new Schema({
 	complaint: String,
 	response: String
 });
-
-
-
-var submissionSchema = new Schema({
-	team: Schema.Types.ObjectId,
-	problem: Schema.Types.ObjectId,
-	source: String,
-	correct: Boolean
-});
