@@ -2,9 +2,11 @@
 	"name": "SLCompSciContest",
 	"description": "Contest website for Seven Lakes High School CompSci",
 	"version": "0.0.0",
+	"repository": "https://github.com/brobo/contestwebsite",
 	"dependencies": {
-		"mongoose": "3.8.*",
 		"express": "3.6.*",
-		"express-handlebars": "1.1.*"
+		"express-handlebars": "1.1.*",		
+		"mongoose": "3.8.*",
+		"mongoose-auto-increment": "*"
 	}
 }

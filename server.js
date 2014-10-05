@@ -1,6 +1,7 @@
 var express = require('express');
 	mongoose = require('mongoose'),
-	handlebars = require('express-handlebars');
+	handlebars = require('express-handlebars'),
+	autoIncrement = require('mongoose-auto-increment');
 
 var config = require('./config')();
 
@@ -16,8 +17,8 @@ app.configure(function() {
 app.engine('handlebars', handlebars({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-mongoose.connect(config.db.server + ':' + config.db.port + '/' + config.db.name);
-
+var conn = mongoose.connect(config.db.server + ':' + config.db.port + '/' + config.db.name);
+autoIncrement.initialize(conn);
 require('./app/routes')(app);
 
 var server = app.listen(config.port, function() {

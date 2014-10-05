@@ -18,20 +18,3 @@ var submissionSchema = new Schema({
 	source: String,
 	correct: Boolean
 });
-
-var teamSchema = new Schema({
-	number: Integer,
-	school: String,
-	members: [{
-		name: String,
-		writtenScore: Integer
-	}],
-	pizza: {
-		paid: Boolean,
-		order: [{
-			type: Schema.Types.ObjectId,
-			quantity: Integer
-		}]
-	},
-	submissions: [Schema.Types.ObjectId]
-});
