@@ -3,10 +3,12 @@ var Submission = rek('submission.model.js');
 
 module.exports = function(app) {
 
-	app.get('/api/submission/:submission_id', function(req, res) {
+	app.get('/api/submissions/:submission_id', function(req, res) {
 		Submission.findById(req.params.submission_id, function(err, submission) {
 			if (err)
 				res.send(err);
+
+			submission.denormalize();
 
 			res.json(submission);
 		});
@@ -16,6 +18,10 @@ module.exports = function(app) {
 		Submission.find(function(err, submissions) {
 			if (err)
 				res.send(err);
+
+			for (var i=0; i<submissions.length; i++) {
+				submissions[i].denormalize();
+			}
 
 			res.json(submissions);
 		});
@@ -34,6 +40,8 @@ module.exports = function(app) {
 		submission.save(function(err, updatedSubmission) {
 			if (err)
 				res.send(err);
+
+			updatedSubmission.denormalize();
 
 			res.json(updatedSubmission);
 		});
@@ -54,6 +62,8 @@ module.exports = function(app) {
 			submission.save(function(err, updatedSubmission) {
 				if (err)
 					res.send(err);
+
+				updatedSubmission.denormalize();
 
 				res.json(updateSubmission);
 			});
