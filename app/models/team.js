@@ -7,6 +7,7 @@ var Pizza = require('./pizza.js');
 var teamSchema = new Schema({
 	number: Number,
 	school: String,
+	division: String,
 	members: [{
 		name: String,
 		writtenScore: Number

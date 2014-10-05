@@ -8,9 +8,7 @@ var appealsSchema = new Schema({
 	response: String
 });
 
-var problemSchema = new Schema({
-	name: String
-});
+
 
 var submissionSchema = new Schema({
 	team: Schema.Types.ObjectId,

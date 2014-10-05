@@ -38,24 +38,6 @@ module.exports = function(app) {
 		});
 	});
 
-	app.put('/api/pizzas/:pizza_id', function(req, res) {
-		Team.findById(req.params.pizza_id, function(err, pizza) {
-
-			if (err)
-				res.send(err);
-
-			pizza.name = req.body.name || pizza.name;
-			pizza.price = req.body.price || pizza.price;
-
-			pizza.save(function(err, updatedTeam) {
-				if (err)
-					res.send(err);
-
-				res.json(updatedTeam);
-			});
-		});
-	});
-
 	app.put('/api/teams/:team_id', function(req, res) {
 		Team.findById(req.params.team_id, function(err, team) {
 			if (err)

@@ -4,7 +4,7 @@ var express = require('express');
 	autoIncrement = require('mongoose-auto-increment'),
 	lessMiddleware = require('less-middleware');
 
-var config = require('./config')();
+var config = require('./app/config')();
 
 var app = express();
 
