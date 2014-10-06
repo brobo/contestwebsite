@@ -13,7 +13,7 @@ problemSchema.plugin(autoIncrement.plugin, {
 	startAt: 1
 });
 
-problemSchema.statics.findByNumber = function(number, cb) {
+problemSchema.statics.findByNumber = function findByNumber(number, cb) {
 	return this.findOne({number: number}, cb);
 };
 

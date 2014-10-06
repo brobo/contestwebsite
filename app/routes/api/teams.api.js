@@ -8,9 +8,9 @@ module.exports = function(app) {
 			if (err)
 				res.send(err);
 
-			team.denormalize();
-
-			res.json(team);
+			team.denormalize(function(denormalized) {
+				res.json(denormalized);
+			});
 		});
 	});
 
@@ -19,10 +19,20 @@ module.exports = function(app) {
 			if (err)
 				res.send(err);
 
-			for (var i=0; i<teams.length; i++)
-				teams[i].denormalize();
+			var processed = [];
 
-			res.json(teams);
+			function loopAsync(i) {
+				if (i == teams.length) {
+					res.json(processed);
+				} else {
+					teams[i].denormalize(function(denormalized) { 
+						processed[i] = denormalized;
+						loopAsync(i+1) 
+					});
+				}
+			}
+
+			loopAsync(0);
 		});
 	});
 
@@ -35,7 +45,9 @@ module.exports = function(app) {
 			if (err)
 				res.send(err);
 
-			res.json(updatedTeam);
+			updatedTeam.denormalize(function(denormalized) {
+				res.json(denormalized);
+			});
 		});
 	});
 
@@ -51,7 +63,9 @@ module.exports = function(app) {
 				if (err)
 					res.send(err);
 
-				res.json(updateTeam);
+				updatedTeam.denormalize(function(denormalized) {
+					res.json(denormalized);
+				});
 			});
 		});
 	});
