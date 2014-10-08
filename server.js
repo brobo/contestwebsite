@@ -17,6 +17,7 @@ app.configure(function() {
 	app.use(express.methodOverride());
 	app.use(express.cookieParser());
 	app.use(express.session({secret: 'I Matthew. I kill the hunters.'}));
+	app.set('json spaces', 0);
 });
 
 app.engine('handlebars', handlebars({defaultLayout: 'main'}));
