@@ -6,8 +6,16 @@ module.exports = function(app) {
 	rek('teams.api.js')(app);
 	rek('problems.api.js')(app);
 	rek('submissions.api.js')(app);
-
+	
 	app.get('/', function(req, res) {
-      res.render('home', {'name' : 'Samuel Jones'});
-    });
+		res.render('login', { layout: false });
+	});
+	
+	app.get('/login', function(req, res) {
+		res.render('login', { layout: false });
+	});
+	
+	app.get('/overview', function(req, res) {
+	  res.render('overview');
+	});
 }
