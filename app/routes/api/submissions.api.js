@@ -1,4 +1,6 @@
 var rek = require('rekuire');
+var _ = require('underscore');
+
 var Submission = rek('submission.model.js');
 var Team = rek('team.model.js');
 
@@ -22,9 +24,19 @@ module.exports = function(app) {
 			if (err)
 				res.send(err);
 
+			function group(list) {
+				var sorted = _.sortBy(list, function(submission) {
+					return submission.time.contest;
+				});
+				sorted = _.groupBy(sorted, function(submission) {
+					return submission.problemNumber;
+				});
+				res.json(sorted);
+			}
+
 			function loopAsync(i) {
 				if (i == submissions.length) {
-					res.json(submissions);
+					group(submissions);
 				} else {
 					submissions[i].denormalize(function(denormalized) { 
 						submissions[i] = denormalized;

@@ -1,6 +1,7 @@
 var rek = require('rekuire');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var ObjectId = mongoose.Types.ObjectId;
 
 var Problem = rek('problem.model.js');
 
@@ -27,15 +28,16 @@ submissionSchema.methods.denormalize = function(callback, recurse) {
 
 	var submission = this.toObject();
 
-	console.log("type is " + (typeof submission.problemNumber));
-
 	Problem.findByNumber(submission.problemNumber, function(err, problem) {
-		console.log(err);
-		console.log("problem is: ");
-		console.log(problem);
 		submission.problem = problem;
 
+		console.log(submission);
+
 		Team.findById(submission.teamId, function(err, team) {
+			if (!team) {
+				callback(submission);
+				return;
+			}
 			team.denormalize(function(denormalized) {
 				submission.team = denormalized;
 				callback(submission);
