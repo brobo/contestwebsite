@@ -1,6 +1,9 @@
 var rek = require('rekuire');
 var Team = rek('team.model.js');
 
+var async = require('async');
+var _ = require('underscore');
+
 module.exports = function(app) {
 
 	app.get('/api/teams/:team_id', function(req, res) {
@@ -8,9 +11,13 @@ module.exports = function(app) {
 			if (err)
 				res.send(err);
 
-			team.denormalize();
-
-			res.json(team);
+			if (!team) {
+				res.json({});
+			} else {
+				team.denormalize(function(denormalized) {
+					res.json(denormalized);
+				});
+			}
 		});
 	});
 
@@ -19,10 +26,62 @@ module.exports = function(app) {
 			if (err)
 				res.send(err);
 
-			for (var i=0; i<teams.length; i++)
-				teams[i].denormalize();
+			var processed = [];
 
-			res.json(teams);
+			function loopAsync(i) {
+				if (i == teams.length) {
+					res.json(processed);
+				} else {
+					teams[i].denormalize(function(denormalized) { 
+						processed[i] = denormalized;
+						loopAsync(i+1) 
+					});
+				}
+			}
+
+			loopAsync(0);
+		});
+	});
+
+	app.get('/api/teams/sorted/:division', function(req, res) {
+		Team.find({division: req.params.division}, function(err, teams) {
+			if (err)
+				res.send(err);
+
+			async.map(teams, function(team, cb) {
+				team.denormalize(function(denormalized) {
+					denormalized.programmingScore = _.reduce(denormalized.submissions, function(memo, submission) {
+						console.log(submission.judgement == 'CORRECT');
+						return memo + (submission.judgement == 'CORRECT' ? 40 : 0);
+					}, 0);
+					denormalized.programming = _.reduce(denormalized.submissions, function(memo, submission) {
+						if (!memo[submission.problemNumber])
+							memo[submission.problemNumber] = {solved: false, incorrect: 0};
+
+						if (submission.judgement == "CORRECT")
+							memo[submission.problemNumber].solved = true;
+						else
+							memo[submission.problemNumber].incorrect++;
+
+						return memo;
+					}, {});
+					denormalized.writtenScore = _.reduce(denormalized.members, function(memo, member) {
+						return memo + member.writtenScore;
+					}, 0);
+					cb(null, denormalized);
+				}, 1);
+			}, function(err, transformed) {
+				if (err)
+					res.send(err);
+
+				var sorted = _.sortBy(_.each(transformed, function(team) {
+					team.totalScore = team.programmingScore + team.writtenScore;
+				}), function(team) {
+					return -(team.totalScore * 1440 + team.programmingScore);
+				});
+
+				res.json(sorted);
+			});
 		});
 	});
 
@@ -35,7 +94,9 @@ module.exports = function(app) {
 			if (err)
 				res.send(err);
 
-			res.json(updatedTeam);
+			updatedTeam.denormalize(function(denormalized) {
+				res.json(denormalized);
+			});
 		});
 	});
 
@@ -51,7 +112,9 @@ module.exports = function(app) {
 				if (err)
 					res.send(err);
 
-				res.json(updateTeam);
+				updatedTeam.denormalize(function(denormalized) {
+					res.json(denormalized);
+				});
 			});
 		});
 	});
