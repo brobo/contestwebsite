@@ -19,90 +19,202 @@
 <div class="row">
 	<div class="col-lg-4">
 		<div class="panel panel-primary">
-			<div class="panel-heading">Overview</div>
 			<div class="panel-body">
-				<h2>Written Contest</h2>
-                <p>
-                The Written Contest will begin at 3:00. It consists of a 40 mainly multiple-choice questions to be completed in 45 minutes. 
-                To be able to attribute your scores to your team and name you must remember the Contestant ID (CID) number.
-                Failure to put your CID on your score sheet could result in a delay of the scoring process. Scores will appear on this page sometime during or after the Programming Contest.
-                </p>
-                <h2>Programming Contest</h2>
-                <p>
-                The Programming Contest will begin at 4:30. It consists of a 12 problems to be completed in 2 hours.
-                Each correct submission is 60 points and incorrect -5 points. The max score is 720 which will be added to your written scores.
-                The table to the right shows your score and the competitors nearest to you.
-                
-                </p>
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
+					<li><a href="#pizza" data-toggle="tab">Pizza</a></li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane fade active in" id="overview">
+						<h4>Written Contest</h4>
+		                <p class="text-justify">
+		                The Written Contest will begin at 3:00. It consists of a 40 mainly multiple-choice questions to be completed in 45 minutes. 
+		                To be able to attribute your scores to your team and name you must remember the Contestant ID (CID) number.
+		                Failure to put your CID on your score sheet could result in a delay of the scoring process. Scores will appear on this page sometime during or after the Programming Contest.
+		                </p>
+		                <h4>Programming Contest</h4>
+		                <p class="text-justify">
+		                The Programming Contest will begin at 4:30. It consists of a 12 problems to be completed in 2 hours.
+		                Each correct submission is 60 points and incorrect -5 points. The max score is 720 which will be added to your written scores.
+		                The table to the right shows your score and the competitors nearest to you.
+		                
+		                </p>
+		          	</div>
+		          	<div class="tab-pane fade" id="pizza">
+						<form>
+							<br>
+							<label>Cheese</label>
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-circle-o"></i></span>
+								<input type="text" class="form-control" placeholder="2">
+							</div>
+							
+							<br>
+							<label>Pepperoni</label>
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-circle-o"></i></span>
+								<input type="text" class="form-control" placeholder="2">
+							</div>
+							
+							<br>
+							<label>Sausage</label>
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-circle-o"></i></span>
+								<input type="text" class="form-control" placeholder="2">
+							</div>
+							
+							<br>
+							<span class="label label-danger pull-left">{{error}}</span>
+        					<button type="submit" class="btn btn-success pull-right">Order</button>
+						</form>
+		          	</div>
+		       	</div>
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-4">
+	<div class="col-lg-5">
 		<div class="panel panel-warning">
-			<div class="panel-heading">Sub-scores</div>
 			<div class="panel-body">
-				Written
-				 <table class="table table-bordered table-hover">
-	                 <thead>
-	                     <tr>
-	                         <th>CID</th>
-	                         <th>Name</th>
-	                         <th>Score</th>
-	                     </tr>
-	                 </thead>
-	                 <tbody>
-	                 	 <tr>
-	                         <td>1</td>
-	                         <td>Miguel</td>
-	                         <td>240</td>
-	                     </tr>
-	                     <tr>
-	                         <td>1</td>
-	                         <td>Miguel</td>
-	                         <td>240</td>
-	                     </tr>
-	                     <tr>
-	                         <td>1</td>
-	                         <td>Miguel</td>
-	                         <td>240</td>
-	                     </tr>
-	                 </tbody>
-                 </table>
-                 Programming
-				 <table class="table table-bordered table-hover">
-	                 <thead>
-	                     <tr>
-	                         <th>#</th>
-	                         <th>Name</th>
-	                         <th>Score</th>
-	                     </tr>
-	                 </thead>
-	                 <tbody>
-	                 	 <tr>
-	                         <td>1</td>
-	                         <td>Stoudonia</td>
-	                         <td>55</td>
-	                     </tr>
-	                 	 <tr>
-	                         <td>2</td>
-	                         <td>Stoudonia</td>
-	                         <td>35</td>
-	                     </tr>
-	                 	 <tr>
-	                         <td>3</td>
-	                         <td>Stoudonia</td>
-	                         <td>60</td>
-	                     </tr>
-	                 </tbody>
-                 </table>
+				<ul class="nav nav-tabs nav-tab-warning">
+					<li class="active"><a href="#written" data-toggle="tab">Sub-scores</a></li>
+					<li><a href="#submissions" data-toggle="tab">Submissions</a></li>
+					<li><a href="#scoreboard" data-toggle="tab">Scoreboard</a></li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane fade active in" id="written">
+						<h5>Written</h5>
+						<table class="table table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>CID</th>
+									<th>Name</th>
+									<th>Score</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th>1</th>
+									<th>Miguel</th>
+									<th>202</th>
+								</tr>
+								<tr>
+									<th>2</th>
+									<th>Colby</th>
+									<th>208</th>
+								</tr>
+								<tr>
+									<th>3</th>
+									<th>Tres</th>
+									<th>232</th>
+								</tr>
+							</tbody>
+						</table>
+						<h5>Programming</h5>
+						<table class="table table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Name</th>
+									<th>Score</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th>1</th>
+									<th>Stroudania</th>
+									<th>55</th>
+								</tr>
+								<tr>
+									<th>1</th>
+									<th>Stroudania</th>
+									<th>55</th>
+								</tr>
+								<tr>
+									<th>1</th>
+									<th>Stroudania</th>
+									<th>55</th>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="tab-pane fade" id="submissions">
+						<br>
+						<table class="table table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Problem</th>
+									<th>Judgment</th>
+									<th>Appeal</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th>1</th>
+									<th>12</th>
+									<th>Yes</th>
+									<th><button type="submit" class="btn btn-xs btn-danger">Appeal</button></th>
+								</tr>
+								<tr>
+									<th>1</th>
+									<th>12</th>
+									<th>Yes</th>
+									<th><button type="submit" class="btn btn-xs btn-danger">Appeal</button></th>
+								</tr>
+								<tr>
+									<th>1</th>
+									<th>12</th>
+									<th>Yes</th>
+									<th><button type="submit" class="btn btn-xs btn-danger">Appeal</button></th>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="tab-pane fade" id="scoreboard">
+						<br>
+						<table class="table table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>Place</th>
+									<th>Team</th>
+									<th>School</th>
+									<th>Score</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th>1</th>
+									<th>12</th>
+									<th>School of Yes</th>
+									<th>1440</th>
+								</tr>
+								<tr>
+									<th>1</th>
+									<th>12</th>
+									<th>School of Yes</th>
+									<th>1440</th>
+								</tr>
+								<tr>
+									<th>1</th>
+									<th>12</th>
+									<th>School of Yes</th>
+									<th>1440</th>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-4">
+	<div class="col-lg-3">
 		<div class="panel panel-success">
 			<div class="panel-heading">Downloads</div>
 			<div class="panel-body">
 				<div class="list-group">
+					<a href="#" class="list-group-item list-group-item">PC^2</a>
+					<a href="#" class="list-group-item list-group-item">PC^2</a>
+					<a href="#" class="list-group-item list-group-item">PC^2</a>
 					<a href="#" class="list-group-item list-group-item">PC^2</a>
 					<a href="#" class="list-group-item list-group-item">PC^2</a>
 					<a href="#" class="list-group-item list-group-item">PC^2</a>

@@ -174,10 +174,16 @@ a.thumbnail.active {
 
 .panel-warning {
 	text-align: center;	
-}
-
-.panel-warning h1 {
-	padding: 0;
-	margin: 0;
-	font-size: 100px;
+	
+	h1 {
+		padding: 0;
+		margin: 0;
+		font-size: 100px;
+	}
+	
+	.nav-tabs {
+		li.active > a {
+			background-color: @brand-warning;
+		}
+	}
 }
