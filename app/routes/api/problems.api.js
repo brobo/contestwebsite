@@ -1,64 +1,63 @@
 var rek = require('rekuire');
 var Problem = rek('problem.model.js');
 
-module.exports = function(app) {
-
-	app.get('/api/problem/:problem_id', function(req, res) {
-		Problem.findById(req.params.problem_id, function(err, problem) {
+module.exports = {
+	getById: function(id, success, fail) {
+		Problem.findById(id, function(err, problem) {
 			if (err)
-				res.send(err);
+				fail(err);
 
-			res.json(problem);
+			success(problem);
 		});
-	});
+	},
 
-	app.get('/api/problems', function(req, res) {
+	get: function(success, fail) {
 		Problem.find(function(err, problems) {
 			if (err)
-				res.send(err);
+				fail(err);
 
-			res.json(problems);
+			success(problems);
 		});
-	});
+	},
 
-	app.post('/api/problems', function(req, res) {
+	create: function(body, success, fail) {
 		var problem = new Problem();
 
-		problem.name = req.body.name;
+		problem.name = body.name;
 
 		problem.save(function(err, updatedProblem) {
 			if (err)
-				res.send(err);
+				fail(err);
 
-			res.json(updatedProblem);
+			success(updatedProblem);
 		});
-	});
+	},
 
-	app.put('/api/problems/:problem_id', function(req, res) {
-		Problem.findById(req.params.problem_id, function(err, problem) {
+	update: function(id, body, success, fail) {
+		Problem.findById(id, function(err, problem) {
 			if (err)
-				res.send(err);
+				fail(err);
 
-			problem.number = req.body.number || problem.number;
-			problem.name = req.body.name || problem.name;
+			problem.number = body.number || problem.number;
+			problem.name = body.name || problem.name;
 
 			problem.save(function(err, updatedProblem) {
 				if (err)
-					res.send(err);
+					fail(err);
 
-				res.json(updateProblem);
+				success(updateProblem);
 			});
 		});
-	});
+	},
 
-	app.delete('/api/problems/:problem_id', function(req, res) {
+	delete: function(id, success, fail) {
 		Problem.remove({
-			_id : req.params.problem_id
+			_id : id
 		}, function(err, problem) {
 			if (err)
-				res.send(err);
+				fail(err);
 
-			req.json(problem);
+			success(problem);
 		});
-	});
+	}
 }

@@ -3,32 +3,34 @@ var _ = require('underscore');
 
 var Team = rek('team.model.js');
 
-module.exports = function(app) {
+module.exports = {
 
-	app.get('/api/pizzas/:pizza_id', function(req, res) {
-
-	});
-
-	app.post('/api/members/post:teamId', function(req, res) {
-		Team.findById(new ObjectId(req.params.teamId), function(err, team) {
-			if (err)
-				res.send(err);
+	create: function(teamId, body, success, fail) {
+		Team.findById(new ObjectId(teamId), function(err, team) {
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			team.members = req.body.members;
 
 			team.save(function(err, updatedTeam) {
-				if (err)
-					res.send(err);
+				if (err) {
+					fail(err);
+					return;
+				}
 
-				res.json(updatedTeam);
+				success(updatedTeam);
 			});
 		});
-	});
+	},
 
-	app.get('/api/members/sorted/:division', function(req, res) {
+	getByDivision: function(division, success, fail) {
 		Team.find({division: req.params.division}, function(err, teams) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			var members = _.flatten(_.map(teams, function(team) {
 				return team.members;
@@ -38,7 +40,7 @@ module.exports = function(app) {
 				return -member.writtenScore;
 			});
 
-			res.json(members);
+			success(members);
 		});
-	});
+	}
 }

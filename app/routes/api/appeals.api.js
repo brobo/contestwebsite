@@ -1,23 +1,24 @@
 var rek = require('rekuire');
 var Appeal = rek('appeal.model.js');
 
-module.exports = function(app) {
+module.exports = {
+	getById: function(id, success, fail) {
+		Appeal.findById(id, function(err, appeal) {
+			if (err) {
+				fail(err);
+				return;
+			}
 
-	app.get('/api/appeals/:appeal_id', function(req, res) {
-		Appeal.findById(req.params.appeal_id, function(err, appeal) {
-			if (err)
-				res.send(err);
-
-			appeal.denormalize(function(denormalized) {
-				res.json(denormalized);
-			});
+			appeal.denormalize(success);
 		});
-	});
+	},
 
-	app.get('/api/appeals', function(req, res) {
+	getAll: function(success, fail) {
 		Appeal.find(function(err, appeals) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			for (var i=0; i<appeals.length; i++) {
 				appeals[i].denormalize();
@@ -25,7 +26,7 @@ module.exports = function(app) {
 
 			function loopAsync(i) {
 				if (i == appeals.length) {
-					res.json(appeals);
+					success(appeals);
 				} else {
 					appeals[i].denormalize(function(){ loopAsync(i+1) });
 				}
@@ -33,53 +34,59 @@ module.exports = function(app) {
 
 			loopAsync(0);
 		});
-	});
+	},
 
-	app.post('/api/appeals', function(req, res) {
+	create: function(body, success, fail) {
 		var appeal = new Appeal();
 
-		appeal.submissionId = req.body.submissionId;
-		appeal.complaint = req.body.complaint;
-		appeal.response = req.body.response;
+		appeal.submissionId = body.submissionId;
+		appeal.complaint = body.complaint;
+		appeal.response = body.response;
 
 		appeal.save(function(err, updatedAppeal) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
-			updatedAppeal.denormalize(function(denormalized) {
-				res.json(denormalized);
-			});
+			updatedAppeal.denormalize(success);
 		});
-	});
+	},
 
-	app.put('/api/appeals/:appeal_id', function(req, res) {
-		Appeal.findById(req.params.appeal_id, function(err, appeal) {
-			if (err)
-				res.send(err);
+	update: function(id, body, success, fail) {
+		Appeal.findById(id, function(err, appeal) {
+			if (err) {
+				fail(err);
+				return;
+			}
 
-			appeal.submissionId = req.body.submissionId || submissionId;
-			appeal.complaint = req.body.complaint || complaint;
-			appeal.response = req.body.response || response;
+			appeal.submissionId = body.submissionId || submissionId;
+			appeal.complaint = body.complaint || complaint;
+			appeal.response = body.response || response;
 
 			appeal.save(function(err, updatedAppeal) {
-				if (err)
-					res.send(err);
+				if (err) {
+					fail(err);
+					return;
+				}
 
 				updatedAppeal.denormalize(function(denormalized) {
-					res.json(denormalized);
+					success(denormalized);
 				});
 			});
 		});
-	});
+	},
 
-	app.delete('/api/appeals/:appeal_id', function(req, res) {
+	delete: function(id, success, fail) {
 		Appeal.remove({
-			_id : req.params.appeal_id
+			_id : id
 		}, function(err, appeal) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
-			req.json(appeal);
+			success(appeal);
 		});
-	});
+	}
 }

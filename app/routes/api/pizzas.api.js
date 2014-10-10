@@ -1,66 +1,78 @@
 var rek = require('rekuire');
 var Pizza = rek('pizza.model.js');
 
-module.exports = function(app) {
+module.exports = {
 
-	app.get('/api/pizzas/:pizza_id', function(req, res) {
-		Pizza.findById(req.params.pizza_id, function(err, pizza) {
-			if (err)
-				res.send(err);
+	getById: function(id, success, fail) {
+		Pizza.findById(id, function(err, pizza) {
+			if (err) {
+				fail(err);
+				return;
+			}
 
-			res.json(pizza);
+			success(pizza);
 		});
-	});
+	},
 
-	app.get('/api/pizzas', function(req, res) {
+	get: function(success, fail) {
 		Pizza.find(function(err, pizzas) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
-			res.json(pizzas);
+			success(pizzas);
 		});
-	});
+	},
 
-	app.post('/api/pizzas', function(req, res) {
+	create: function(body, success, fail) {
 		var pizza = new Pizza();
 
-		pizza.name = req.body.name;
-		pizza.price = req.body.price;
+		pizza.name = body.name;
+		pizza.price = body.price;
 
 		pizza.save(function(err, updatedPizza) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
-			res.json(updatedPizza);
+			success(updatedPizza);
 		})
-	});
+	},
 
-	app.put('/api/pizzas/:pizza_id', function(req, res) {
-		Pizza.findById(req.params.pizza_id, function(err, pizza) {
+	update: function(id, body, success, fail) {
+		Pizza.findById(id, function(err, pizza) {
 
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
-			pizza.name = req.body.name || pizza.name;
-			pizza.price = req.body.price || pizza.price;
+			pizza.name = body.name || pizza.name;
+			pizza.price = body.price || pizza.price;
 
 			pizza.save(function(err, updatedPizza) {
-				if (err)
-					res.send(err);
+				if (err) {
+					fail(err);
+					return;
+				}
 
-				res.json(updatedPizza);
+				success(updatedPizza);
 			});
 		});
-	});
+	},
 
-	app.delete('/api/pizzas/:pizza_id', function(req, res) {
+	delete: function(id, success, fail) {
 		Pizza.remove({
-			_id : req.params.pizza_id
+			_id : id
 		}, function(err, pizza) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
-			req.json(pizza);
+			success(pizza);
 		});
-	});
+	}
 }

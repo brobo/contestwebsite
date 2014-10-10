@@ -6,23 +6,26 @@ var Team = rek('team.model.js');
 
 var ObjectId = require('mongoose').Types.ObjectId;
 
-module.exports = function(app) {
-
-	app.get('/api/submissions/:submission_id', function(req, res) {
-		Submission.findById(new ObjectId(req.params.submission_id), function(err, submission) {
-			if (err)
-				res.send(err);
+module.exports = {
+	getById: function(id, success, fail) {
+		Submission.findById(new ObjectId(id), function(err, submission) {
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			submission.denormalize(function(denormalized) {
-				res.json(denormalized);
+				success(denormalized);
 			});
 		});
-	});
+	},
 
-	app.get('/api/submissions', function(req, res) {
+	get: function(success, fail) {
 		Submission.find(function(err, submissions) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			function group(list) {
 				var sorted = _.sortBy(list, function(submission) {
@@ -31,7 +34,7 @@ module.exports = function(app) {
 				sorted = _.groupBy(sorted, function(submission) {
 					return submission.problemNumber;
 				});
-				res.json(sorted);
+				success(sorted);
 			}
 
 			function loopAsync(i) {
@@ -47,68 +50,79 @@ module.exports = function(app) {
 
 			loopAsync(0);
 		});
-	});
+	},
 
-	app.post('/api/submissions', function(req, res) {
+	create: function(body,success, fail) {
 		var submission = new Submission();
 
-		submission.number = req.body.number;
-		submission.teamId = req.body.teamId;
-		submission.problemId = req.body.problemId;
-		submission.time.contest = req.body.time ? req.body.time.contest : 0;
-		submission.time.global = req.body.time ? req.body.time.global : 0;
-		submission.source = req.body.source;
-		submission.judgement = req.body.judgement;
+		submission.number = body.number;
+		submission.teamId = body.teamId;
+		submission.problemId = body.problemId;
+		submission.time.contest = body.time ? body.time.contest : 0;
+		submission.time.global = body.time ? body.time.global : 0;
+		submission.source = body.source;
+		submission.judgement = body.judgement;
 
 		submission.save(function(err, updatedSubmission) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			Team.findById(updatedSubmission.teamId, function(err, team) {
-				if (!err) {
-					team.submissionIds.push(updatedSubmission._id);
-					team.save();
+				if (err) {
+					fail (err);
+					return;
 				}
+
+				team.submissionIds.push(updatedSubmission._id);
+				team.save();
 			});
 
 			updatedSubmission.denormalize(function(denormalized) {
-				res.json(denormalized);
+				success(denormalized);
 			});
 		});
-	});
+	},
 
-	app.put('/api/submissions/:submission_id', function(req, res) {
-		Submission.findById(new ObjectId(req.params.submission_id), function(err, submission) {
-			if (err)
-				res.send(err);
+	update: function(id, body, success, fail) {
+		Submission.findById(new ObjectId(id), function(err, submission) {
+			if (err) {
+				fail(err);
+				return;
+			}
 
-			submission.number = req.body.number || submission.number;
-			submission.teamId = req.body.teamId || submission.teamId;
-			submission.problemId = req.body.problemId || submission.problemId;
-			submission.time.contest = req.body.time.contest || submission.time.contest;
-			submission.time.global = req.body.time.global || submission.time.global;
-			submission.source = req.body.source || submission.source;
-			submission.judgement = req.body.judgement || submission.judgement;
+			submission.number = body.number || submission.number;
+			submission.teamId = body.teamId || submission.teamId;
+			submission.problemId = body.problemId || submission.problemId;
+			submission.time.contest = body.time.contest || submission.time.contest;
+			submission.time.global = body.time.global || submission.time.global;
+			submission.source = body.source || submission.source;
+			submission.judgement = body.judgement || submission.judgement;
 
 			submission.save(function(err, updatedSubmission) {
-				if (err)
-					res.send(err);
+				if (err) {
+					fail(err);
+					return;
+				}
 
 				updatedSubmission.denormalize(function(denormalized) {
-					res.json(denormalized);
+					success(denormalized);
 				});
 			});
 		});
-	});
+	},
 
-	app.delete('/api/submissions/:submission_id', function(req, res) {
+	delete: function(id, success, fail) {
 		Submission.remove({
-			_id : req.params.submission_id
+			_id : id
 		}, function(err, submission) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
-			req.json(submission);
+			success(submission);
 		});
-	});
+	}
 }

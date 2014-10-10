@@ -5,33 +5,36 @@ var async = require('async');
 var _ = require('underscore');
 var bcrypt = require('bcrypt-nodejs');
 
-module.exports = function(app) {
-
-	app.get('/api/teams/:team_id', function(req, res) {
-		Team.findById(req.params.team_id, function(err, team) {
-			if (err)
-				res.send(err);
+module.exports = {
+	getById: function(id, success, fail) {
+		Team.findById(id, function(err, team) {
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			if (!team) {
-				res.json({});
+				success({});
 			} else {
 				team.denormalize(function(denormalized) {
-					res.json(denormalized);
+					success(denormalized);
 				});
 			}
 		});
-	});
+	},
 
-	app.get('/api/teams', function(req, res) {
+	get: function(success, fail) {
 		Team.find(function(err, teams) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			var processed = [];
 
 			function loopAsync(i) {
 				if (i == teams.length) {
-					res.json(processed);
+					success(processed);
 				} else {
 					teams[i].denormalize(function(denormalized) { 
 						processed[i] = denormalized;
@@ -42,12 +45,14 @@ module.exports = function(app) {
 
 			loopAsync(0);
 		});
-	});
+	},
 
-	app.get('/api/teams/sorted/:division', function(req, res) {
-		Team.find({division: req.params.division}, function(err, teams) {
-			if (err)
-				res.send(err);
+	getByDivision: function(division, success, fail) {
+		Team.find({division: division}, function(err, teams) {
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			async.map(teams, function(team, cb) {
 				team.denormalize(function(denormalized) {
@@ -72,8 +77,10 @@ module.exports = function(app) {
 					cb(null, denormalized);
 				}, 1);
 			}, function(err, transformed) {
-				if (err)
-					res.send(err);
+				if (err) {
+					fail(err);
+					return;
+				}
 
 				var sorted = _.sortBy(_.each(transformed, function(team) {
 					team.totalScore = team.programmingScore + team.writtenScore;
@@ -81,105 +88,121 @@ module.exports = function(app) {
 					return -(team.totalScore * 1440 + team.programmingScore);
 				});
 
-				res.json(sorted);
+				success(sorted);
 			});
 		});
-	});
+	},
 
-	app.post('/api/teams', function(req, res) {
+	create: function(body, success, fail) {
 		var team = new Team();
 
-		team.school = req.body.school;
+		team.school = body.school;
 
 		team.save(function(err, updatedTeam) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			updatedTeam.denormalize(function(denormalized) {
-				res.json(denormalized);
+				success(denormalized);
 			});
 		});
-	});
+	},
 
-	app.post('/api/teams/:team_id', function(req, res) {
-		Team.findById(req.params.team_id, function(err, team) {
-			if (err)
-				res.send(err);
+	setMembers: function(teamId, body, success, fail) {
+		Team.findById(teamId, function(err, team) {
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			team.members = [];
-			team.members[0].name = req.body.members[0];
-			team.members[1].name = req.body.members[1];
-			team.members[2].name = req.body.members[2]; 
+			team.members[0].name = body.members[0];
+			team.members[1].name = body.members[1];
+			team.members[2].name = body.members[2]; 
 
-			team.password = bcrypt.hashSync(req.body.password, 10);
+			team.password = bcrypt.hashSync(body.password, 10);
 
 			team.save(function(err, updatedTeam) {
-				if (err)
-					res.send(err);
+				if (err) {
+					fail(err);
+					return;
+				}
 
 				updatedTeam.denormalize(function(denormalized) {
-					res.json(denormalized);
+					success(denormalized);
 				});
 			});
 		});
-	});
+	},
 
-	app.get('/api/login', function(req, res) {
-		Team.findByNumber(req.body.schoolNumber, function(err, team) {
-			if (err)
-				res.send(err);
+	login: function(teamNumber, password, success, fail) {
+		Team.findByNumber(teamNumber, function(err, team) {
+			if (err) {
+				fail(err);
+				return;
+			}
 
-			if (bcrypt.checkHashSync(team.password, req.body.password)) {
-				res.send({success: true});
+			if (bcrypt.checkHashSync(team.password, password)) {
+				success({success: true});
 			} else {
-				res.send({success: false});
+				success({success: false});
 			}
 		})
-	});
+	},
 
-	app.put('/api/teams/:team_id', function(req, res) {
-		Team.findById(req.params.team_id, function(err, team) {
-			if (err)
-				res.send(err);
+	update: function(id, body, success, fail) {
+		Team.findById(id, function(err, team) {
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			team.members = team.members || [];
-			team.members[0].name = req.body.members[0] || team.members[0].name;
-			team.members[1].name = req.body.members[1] || team.members[1].name;
-			team.members[2].name = req.body.members[2] || team.members[2].name; 
+			team.members[0].name = body.members[0] || team.members[0].name;
+			team.members[1].name = body.members[1] || team.members[1].name;
+			team.members[2].name = body.members[2] || team.members[2].name; 
 
 			team.save(function(err, updatedTeam) {
-				if (err)
-					res.send(err);
+				if (err) {
+					fail(err);
+					return;
+				}
 
 				updatedTeam.denormalize(function(denormalized) {
-					res.json(denormalized);
+					success(denormalized);
 				});
 			});
 		});
-	});
+	},
 
-	app.delete('/api/teams/:team_id', function(req, res) {
+	delete: function(id, success, fail) {
 		Team.remove({
-			_id : req.params.team_id
+			_id : id
 		}, function(err, team) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
-			req.json(team);
+			success(team);
 		});
-	});
+	},
 
-	app.get('/api/schools', function(req, res) {
+	getSchools: function(success, fail) {
 		Team.find(function(err, teams) {
-			if (err)
-				res.send(err);
+			if (err) {
+				fail(err);
+				return;
+			}
 
 			var arr = _.reduce(teams, function(memo, team) {
 				memo[team.number] = team.school;
 				return memo;
 			}, {});
 
-			res.json(arr);
+			success(arr);
 		});
-	});
+	}
 }
