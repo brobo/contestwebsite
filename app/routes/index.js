@@ -10,11 +10,11 @@ module.exports = function(app) {
 	rek('submissions.api.js')(app);
 	
 	app.get('/', function(req, res) {
-		res.render('login', { layout: false });
+		res.sendfile('views/login.html');
 	});
 	
 	app.get('/login', function(req, res) {
-		res.render('login', { layout: false });
+		res.render('views/login.html');
 	});
 	
 	app.get('/overview', function(req, res) {

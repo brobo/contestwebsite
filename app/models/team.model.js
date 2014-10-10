@@ -9,6 +9,7 @@ var ObjectId = mongoose.Types.ObjectId;
 
 var teamSchema = new Schema({
 	number: Number,
+	password: String,
 	school: String,
 	division: String,
 	members: [{
@@ -73,5 +74,19 @@ teamSchema.methods.denormalize = function(callback, recurse) {
 		});
 	});
 };
+
+teamSchema.set('toJSON', {
+	transform: function(doc, ret, options) {
+		delete ret.password;
+		return ret;
+	}
+});
+
+teamSchema.set('toObject', {
+	transform: function(doc, ret, options) {
+		delete ret.password;
+		return ret;
+	}
+});
 
 module.exports = mongoose.model('Team', teamSchema);

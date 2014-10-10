@@ -3,6 +3,7 @@ var Team = rek('team.model.js');
 
 var async = require('async');
 var _ = require('underscore');
+var bcrypt = require('bcrypt-nodejs');
 
 module.exports = function(app) {
 
@@ -88,7 +89,7 @@ module.exports = function(app) {
 	app.post('/api/teams', function(req, res) {
 		var team = new Team();
 
-		team.school = req.body.school; 
+		team.school = req.body.school;
 
 		team.save(function(err, updatedTeam) {
 			if (err)
@@ -100,13 +101,51 @@ module.exports = function(app) {
 		});
 	});
 
+	app.post('/api/teams/:team_id', function(req, res) {
+		Team.findById(req.params.team_id, function(err, team) {
+			if (err)
+				res.send(err);
+
+			team.members = [];
+			team.members[0].name = req.body.members[0];
+			team.members[1].name = req.body.members[1];
+			team.members[2].name = req.body.members[2]; 
+
+			team.password = bcrypt.hashSync(req.body.password, 10);
+
+			team.save(function(err, updatedTeam) {
+				if (err)
+					res.send(err);
+
+				updatedTeam.denormalize(function(denormalized) {
+					res.json(denormalized);
+				});
+			});
+		});
+	});
+
+	app.get('/api/login', function(req, res) {
+		Team.findByNumber(req.body.schoolNumber, function(err, team) {
+			if (err)
+				res.send(err);
+
+			if (bcrypt.checkHashSync(team.password, req.body.password)) {
+				res.send({success: true});
+			} else {
+				res.send({success: false});
+			}
+		})
+	});
+
 	app.put('/api/teams/:team_id', function(req, res) {
 		Team.findById(req.params.team_id, function(err, team) {
 			if (err)
 				res.send(err);
 
-			team.school = req.body.school || team.school;
-			team.members = req.body.members || team.members;
+			team.members = team.members || [];
+			team.members[0].name = req.body.members[0] || team.members[0].name;
+			team.members[1].name = req.body.members[1] || team.members[1].name;
+			team.members[2].name = req.body.members[2] || team.members[2].name; 
 
 			team.save(function(err, updatedTeam) {
 				if (err)
@@ -127,6 +166,20 @@ module.exports = function(app) {
 				res.send(err);
 
 			req.json(team);
+		});
+	});
+
+	app.get('/api/schools', function(req, res) {
+		Team.find(function(err, teams) {
+			if (err)
+				res.send(err);
+
+			var arr = _.reduce(teams, function(memo, team) {
+				memo[team.number] = team.school;
+				return memo;
+			}, {});
+
+			res.json(arr);
 		});
 	});
 }
