@@ -11,7 +11,7 @@
 		<div class="panel panel-warning">
 			<div class="panel-heading">Score</div>
 			<div class="panel-body">
-				<h1>1440</h1>
+				<h1>{{team.totalScore}}</h1>
 			</div>	
 		</div>
 	</div>
@@ -28,39 +28,41 @@
 					<div class="tab-pane fade active in" id="overview">
 						<h4>Written Contest</h4>
 		                <p class="text-justify">
-		                The Written Contest will begin at 3:00. It consists of a 40 mainly multiple-choice questions to be completed in 45 minutes. 
-		                To be able to attribute your scores to your team and name you must remember the Contestant ID (CID) number.
+		                The Written Contest will begin at 8:30 AM. It consists of 40 mainly multiple-choice questions to be completed in 45 minutes. 
+		                To be able to attribute your scores to your team and name you must remember the Contestant ID (CID) number, which is found next to your name in the Sub-scores tab.
 		                Failure to put your CID on your score sheet could result in a delay of the scoring process. Scores will appear on this page sometime during or after the Programming Contest.
 		                </p>
 		                <h4>Programming Contest</h4>
 		                <p class="text-justify">
-		                The Programming Contest will begin at 4:30. It consists of a 12 problems to be completed in 2 hours.
-		                Each correct submission is 60 points and incorrect -5 points. The max score is 720 which will be added to your written scores.
-		                The table to the right shows your score and the competitors nearest to you.
-		                
+		                The Programming Contest will begin at 10:30 AM. The contest consists of 18 problems to be completed in 2 hours. Each problem has a base value of 40 points (all problems are weighed equally),
+		                but each incorrect submission will deduct 5 points from this amount until the problem is worth no points. The point deductions are not considered if you never get the problem correct.
 		                </p>
 		          	</div>
 		          	<div class="tab-pane fade" id="pizza">
-						<form>
+		          		<p>Pizza is $12.00 per box, regardless of the type of pizza. All payments go to the concession stand once you've ordered - make sure you say your team number to the cashier!</p>
+		          		{{#if team.pizza.amountDue}}
+		          		<p><b>Amount Due: </b>${{team.pizza.amountDue}}</p>
+		          		{{/if}}
+						<form action="/api/pizza/order" method="post">
 							<br>
 							<label>Cheese</label>
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-circle-o"></i></span>
-								<input type="text" class="form-control" placeholder="2">
+								<input name="cheese" value="{{team.pizza.cheese}}" type="text" class="form-control" placeholder="Amount">
 							</div>
 							
 							<br>
 							<label>Pepperoni</label>
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-circle-o"></i></span>
-								<input type="text" class="form-control" placeholder="2">
+								<input name="pepperoni" value="{{team.pizza.pepperoni}}" type="text" class="form-control" placeholder="Amount">
 							</div>
 							
 							<br>
 							<label>Sausage</label>
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-circle-o"></i></span>
-								<input type="text" class="form-control" placeholder="2">
+								<input name="sausage" value="{{team.pizza.sausage}}" type="text" class="form-control" placeholder="Amount">
 							</div>
 							
 							<br>
@@ -92,21 +94,13 @@
 								</tr>
 							</thead>
 							<tbody>
+								{{#each team.members}}
 								<tr>
-									<th>1</th>
-									<th>Miguel</th>
-									<th>202</th>
+									<th>{{cid}}</th>
+									<th>{{name}}</th>
+									<th>{{writtenScore}}</th>
 								</tr>
-								<tr>
-									<th>2</th>
-									<th>Colby</th>
-									<th>208</th>
-								</tr>
-								<tr>
-									<th>3</th>
-									<th>Tres</th>
-									<th>232</th>
-								</tr>
+								{{/each}}
 							</tbody>
 						</table>
 						<h5>Programming</h5>
@@ -119,21 +113,13 @@
 								</tr>
 							</thead>
 							<tbody>
+								{{#each problemStatus}}
 								<tr>
-									<th>1</th>
-									<th>Stroudania</th>
-									<th>55</th>
+									<th>{{number}}</th>
+									<th>{{name}}</th>
+									<th>{{score}}</th>
 								</tr>
-								<tr>
-									<th>1</th>
-									<th>Stroudania</th>
-									<th>55</th>
-								</tr>
-								<tr>
-									<th>1</th>
-									<th>Stroudania</th>
-									<th>55</th>
-								</tr>
+								{{/each}}
 							</tbody>
 						</table>
 					</div>
@@ -149,24 +135,14 @@
 								</tr>
 							</thead>
 							<tbody>
+								{{#each submissions}}
 								<tr>
-									<th>1</th>
-									<th>12</th>
-									<th>Yes</th>
+									<th>{{number}}</th>
+									<th>{{problemNumber}}</th>
+									<th>{{judgement}}</th>
 									<th><button type="submit" class="btn btn-xs btn-danger">Appeal</button></th>
 								</tr>
-								<tr>
-									<th>1</th>
-									<th>12</th>
-									<th>Yes</th>
-									<th><button type="submit" class="btn btn-xs btn-danger">Appeal</button></th>
-								</tr>
-								<tr>
-									<th>1</th>
-									<th>12</th>
-									<th>Yes</th>
-									<th><button type="submit" class="btn btn-xs btn-danger">Appeal</button></th>
-								</tr>
+								{{/each}}
 							</tbody>
 						</table>
 					</div>
@@ -182,24 +158,14 @@
 								</tr>
 							</thead>
 							<tbody>
+								{{#each localRanking}}
 								<tr>
-									<th>1</th>
-									<th>12</th>
-									<th>School of Yes</th>
-									<th>1440</th>
+									<th>{{place}}</th>
+									<th>{{teamNumber}}</th>
+									<th>{{school}}</th>
+									<th>{{totalScore}}</th>
 								</tr>
-								<tr>
-									<th>1</th>
-									<th>12</th>
-									<th>School of Yes</th>
-									<th>1440</th>
-								</tr>
-								<tr>
-									<th>1</th>
-									<th>12</th>
-									<th>School of Yes</th>
-									<th>1440</th>
-								</tr>
+								{{/each}}
 							</tbody>
 						</table>
 					</div>
@@ -212,15 +178,8 @@
 			<div class="panel-heading">Downloads</div>
 			<div class="panel-body">
 				<div class="list-group">
-					<a href="#" class="list-group-item list-group-item">PC^2</a>
-					<a href="#" class="list-group-item list-group-item">PC^2</a>
-					<a href="#" class="list-group-item list-group-item">PC^2</a>
-					<a href="#" class="list-group-item list-group-item">PC^2</a>
-					<a href="#" class="list-group-item list-group-item">PC^2</a>
-					<a href="#" class="list-group-item list-group-item">PC^2</a>
-					<a href="#" class="list-group-item list-group-item">PC^2</a>
-					<a href="#" class="list-group-item list-group-item">PC^2</a>
-					<a href="#" class="list-group-item list-group-item">PC^2</a>
+					<a href="downloads/pc2-team.zip" class="list-group-item list-group-item">PC<sup>2</sup></a>
+					<a href="downloads/schniggles.in" class="list-group-item list-group-item">Dryrun Sample Input</a>
 				</div>
 			</div>	
 		</div>

@@ -1,5 +1,5 @@
 var express = require('express'),
-	rek = require('rekuire')
+	rek = require('rekuire'),
 	mongoose = require('mongoose'),
 	handlebars = require('express-handlebars'),
 	autoIncrement = require('mongoose-auto-increment'),

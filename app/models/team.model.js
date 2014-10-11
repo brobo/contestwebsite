@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var autoIncrement = require('mongoose-auto-increment');
 var Submission = rek('submission.model.js');
 var Pizza = rek('pizza.model.js');
+var _ = require('underscore');
 
 var Schema = mongoose.Schema;
 var ObjectId = mongoose.Types.ObjectId;
@@ -18,18 +19,11 @@ var teamSchema = new Schema({
 	}],
 	pizza: {
 		paid: Boolean,
-		order: [{
-			typeId: Schema.Types.ObjectId,
-			quantity: Number
-		}]
-	},
-	submissionIds: [Schema.Types.ObjectId]
-});
-
-teamSchema.plugin(autoIncrement.plugin, {
-	model: 'Team',
-	field: 'number',
-	startAt: 1
+		ordered: Boolean,
+		cheese: Number,
+		pepperoni: Number,
+		sausage: Number
+	}
 });
 
 teamSchema.methods.denormalize = function(callback, recurse) {
@@ -44,49 +38,47 @@ teamSchema.methods.denormalize = function(callback, recurse) {
 
 	team.submissions = [];
 
-	function loopPizzaAsync(i, finish) {
-		if (i == team.pizza.order.length) {
-			finish(team);
-		} else {
-			Pizza.findById(pizza.order[i].typeId, function(err, pizza) {
-				team.pizza.order[i].type = pizza;
-				loopPizzaAsync(i+1, finish);
-			});
-		}
-	}
-
-	function loopSubmissionAsync(i, finish) {
-		if (i == team.submissionIds.length) {
-			finish(team);
-		} else {
-			Submission.findById(new ObjectId(team.submissionIds[i]), function(err, submission) {
-				submission.denormalize(function(denormalized) {
-					team.submissions[i] = denormalized;
-					loopSubmissionAsync(i+1, finish);
+	function loopSubmissionAsync(finish) {
+		Submission.find({teamId: team._id }, function(err, submissions) {
+			for(var count = 0; count < submissions.length; count++) {
+				submissions[count].denormalize(function(denormalized) {
+					team.submissions[count] = denormalized;
 				}, recurse-1);
-			});
-		}
+			}
+
+			finish(team);
+		});
 	}
 
-	loopPizzaAsync(0, function() { 
-		loopSubmissionAsync(0, function() {
-			callback(team);
-		});
+	loopSubmissionAsync(function(res) {
+		res.programming = _.reduce(res.submissions, function(memo, submission) {
+			if (!memo[submission.problemNumber])
+				memo[submission.problemNumber] = {solved: false, incorrect: 0};
+
+			if (submission.judgement == "CORRECT")
+				memo[submission.problemNumber].solved = true;
+			else
+				memo[submission.problemNumber].incorrect++;
+
+			return memo;
+		}, {});
+
+		res.programmingScore = _.reduce(res.programming, function(memo, inst) {
+			return memo + (inst.solved ? Math.max(40 - inst.incorrect * 5, 0) : 0);
+		}, 0);
+
+		res.writtenScore = _.reduce(res.members, function(memo, member) {
+			return memo + member.writtenScore;
+		}, 0);
+
+		res.totalScore = res.writtenScore + res.programmingScore;
+
+		callback(team);
 	});
 };
 
-teamSchema.set('toJSON', {
-	transform: function(doc, ret, options) {
-		delete ret.password;
-		return ret;
-	}
-});
-
-teamSchema.set('toObject', {
-	transform: function(doc, ret, options) {
-		delete ret.password;
-		return ret;
-	}
-});
+teamSchema.statics.findByNumber = function(number, callback) {
+	return this.findOne({number: number}, callback);
+};
 
 module.exports = mongoose.model('Team', teamSchema);

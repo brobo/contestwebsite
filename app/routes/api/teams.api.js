@@ -56,25 +56,6 @@ module.exports = {
 
 			async.map(teams, function(team, cb) {
 				team.denormalize(function(denormalized) {
-					denormalized.programmingScore = _.reduce(denormalized.submissions, function(memo, submission) {
-						console.log(submission.judgement == 'CORRECT');
-						return memo + (submission.judgement == 'CORRECT' ? 40 : 0);
-					}, 0);
-					denormalized.programming = _.reduce(denormalized.submissions, function(memo, submission) {
-						if (!memo[submission.problemNumber])
-							memo[submission.problemNumber] = {solved: false, incorrect: 0};
-
-						if (submission.judgement == "CORRECT")
-							memo[submission.problemNumber].solved = true;
-						else
-							memo[submission.problemNumber].incorrect++;
-
-						return memo;
-					}, {});
-					denormalized.writtenScore = _.reduce(denormalized.members, function(memo, member) {
-						return memo + member.writtenScore;
-					}, 0);
-					cb(null, denormalized);
 				}, 1);
 			}, function(err, transformed) {
 				if (err) {
@@ -110,19 +91,56 @@ module.exports = {
 		});
 	},
 
-	setMembers: function(teamId, body, success, fail) {
-		Team.findById(teamId, function(err, team) {
+	createAndSet: function(body, success, fail) {
+		var test = {};
+
+		test.number = body.teamNumber;
+		test.school = body.school;
+
+		test.members = [];
+		for(var x = 0; x < body.members.length; x++) {
+			if(body.members[x]) {
+				test.members[x] = {
+					name: body.members[x],
+					writtenScore: 0
+				};
+			}
+		}
+
+		if(body.cpassword) {
+			if(body.cpassword !== body.password) {
+				fail(new Error("The password and password confirmation do not match!"));
+				return;
+			}
+		}
+
+		test.password = body.password; // Still not sorry.
+
+		Team.create(test, function(err, obj) {
+			if(err) { fail(err); return; }
+
+			success(obj);
+		});
+	},
+
+	setMembers: function(teamNumber, body, success, fail) {
+		Team.findByNumber(teamNumber, function(err, team) {
 			if (err) {
 				fail(err);
+				return;
+			}
+
+			if(team.password !== null) {
+				fail(new Error("The password has already been set!"));
 				return;
 			}
 
 			team.members = [];
 			team.members[0].name = body.members[0];
 			team.members[1].name = body.members[1];
-			team.members[2].name = body.members[2]; 
+			team.members[2].name = body.members[2];
 
-			team.password = bcrypt.hashSync(body.password, 10);
+			team.password = body.password; // I'm sorry, don't kill me.
 
 			team.save(function(err, updatedTeam) {
 				if (err) {
@@ -144,16 +162,16 @@ module.exports = {
 				return;
 			}
 
-			if (bcrypt.checkHashSync(team.password, password)) {
-				success({success: true});
+			if (team.password === password) {
+				success({ success: true, team: team });
 			} else {
-				success({success: false});
+				fail(new Error("Invalid password for this team."));
 			}
 		})
 	},
 
-	update: function(id, body, success, fail) {
-		Team.findById(id, function(err, team) {
+	update: function(teamNumber, body, success, fail) {
+		Team.findByNumber(teamNumber, function(err, team) {
 			if (err) {
 				fail(err);
 				return;
