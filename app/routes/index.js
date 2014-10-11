@@ -5,14 +5,18 @@ module.exports = function(app) {
 	rek('local.js');
 	
 	app.get('/', function(req, res) {
-		res.sendfile('views/login.html');
+		res.render('login', { layout: false });
 	});
 	
 	app.get('/login', function(req, res) {
-		res.render('views/login.html');
+		res.render('login', { layout: false });
 	});
 	
 	app.get('/overview', function(req, res) {
-	  res.render('overview');
+		res.render('overview');
+	});
+	
+	app.get('/admin', function(req, res) {
+		res.render('admin');
 	});
 }
