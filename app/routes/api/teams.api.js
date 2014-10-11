@@ -231,5 +231,29 @@ module.exports = {
 
 			success(arr);
 		});
+	},
+
+	editScore: function(teamNumber, memberIndex, score, success, fail) {
+		Team.findByNumber(teamNumber, function(err, resteam) {
+			if (err) {
+				fail(err);
+				return;
+			}
+
+			if(!resteam) {
+				fail(new Error("Team doesn't exist"));
+				return;
+			}
+
+			resteam.members[memberIndex].writtenScore = score;
+			resteam.save(function(err, updatedTeam) {
+				if (err) {
+					fail(err);
+					return;
+				}
+
+				success(updatedTeam);
+			});
+		});
 	}
 }

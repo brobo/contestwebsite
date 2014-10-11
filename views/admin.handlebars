@@ -66,7 +66,6 @@
 									<th>CID</th>
 									<th>Name</th>
 									<th>Score</th>
-									<th>Edit</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -75,8 +74,14 @@
 								<tr>
 									<td>{{cid}}</td>
 									<td>{{name}}</td>
-									<td>{{writtenScore}}</td>
-									<td><button type="submit" class="btn btn-xs btn-warning"  data-toggle="modal" data-target="#myModal2">Edit</button></td>
+									<td>
+									<form action="/api/updateWritten" method="post">
+										<input name="teamNumber" type="hidden" value="{{../number}}">
+										<input name="memberIndex" type="hidden" value="{{@index}}">
+										<input name="score" class="form-control" type="text" value="{{writtenScore}}">
+										<button type="submit" class="btn btn-xs btn-warning">Edit</button>
+									</form>
+									</td>
 								</tr>
 								{{/each}}
 								{{/each}}

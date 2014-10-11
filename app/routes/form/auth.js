@@ -2,6 +2,8 @@ var rek = require('rekuire');
 var team = rek('teams.api');
 var Team = rek('team.model');
 
+var apis = rek('local.js');
+
 module.exports = function(app) {
 	authFail = function(data) {
 		console.log(data);
@@ -102,4 +104,24 @@ module.exports = function(app) {
 			res.json({success: true})
 		});
 	}); 
+
+	app.post('/api/updateWritten', function(req, res) {
+		if (!req.session.teamNumber) {
+			res.redirect('/login');
+			return;
+		}
+
+		if (req.session.teamNumber != -1) {
+			res.redirect('/login');
+			return;
+		}
+
+		console.log(req.body);
+
+		team.editScore(req.body.teamNumber, req.body.memberIndex, req.body.score, function() {
+			res.redirect('/admin');
+		}, function() {
+			res.redirect('/admin');
+		});
+	});
 };
