@@ -22,6 +22,7 @@
 			<div class="panel-body">
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="#team" data-toggle="tab">Team</a></li>
+					<li><a href="#written" data-toggle="tab">Written</a></li>
 					<li><a href="#pizza" data-toggle="tab">Pizza</a></li>
 					<li><a href="#appeal" data-toggle="tab">Appeal</a></li>
 				</ul>
@@ -51,6 +52,27 @@
 									<td>202</td>
 									<td>1</td>
 									<td>Miguel</td>
+								</tr>
+							</tbody>
+						</table>
+		          	</div>
+		          	<div class="tab-pane fade" id="written">
+		          		<br>
+		          		<table class="table table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>CID</th>
+									<th>Name</th>
+									<th>Score</th>
+									<th>Edit</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>1</td>
+									<td>Miguel</td>
+									<td>202</td>
+									<td><button type="submit" class="btn btn-xs btn-warning"  data-toggle="modal" data-target="#myModal2">Edit</button></td>
 								</tr>
 							</tbody>
 						</table>
@@ -153,6 +175,29 @@
       <div class="modal-body">
 	      <form>
 			<label>Response</label>
+			<div class="input-group">
+				<span class="input-group-addon"><i class="fa fa-pencil"></i></span>
+				<input type="text" class="form-control" placeholder="">
+			</div>
+	      </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cancel</span></button>
+        <h4 class="modal-title" id="myModalLabel">Written</h4>
+      </div>
+      <div class="modal-body">
+	      <form>
+			<label>Score</label>
 			<div class="input-group">
 				<span class="input-group-addon"><i class="fa fa-pencil"></i></span>
 				<input type="text" class="form-control" placeholder="">
