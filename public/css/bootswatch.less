@@ -168,6 +168,9 @@ a.thumbnail.active {
   }
 }
 
+
+// Extras =====================================================================
+
 .spacer-top {
 	height: 6vw;
 }
@@ -186,4 +189,24 @@ a.thumbnail.active {
 			background-color: @brand-warning;
 		}
 	}
+}
+
+.table > tbody > tr > td.problem_container {
+    padding: 0;
+    width: calc(40px * 18 + 2)
+}
+
+.problem_block {
+    display: block;
+    background: inheirt;
+    text-align: center;
+    padding-top: 10px;
+    position: relative;
+    height: 40px;
+    width: 40px;
+    float: left;
+}
+
+.problem_block.solved {
+    background: #00A450;
 }

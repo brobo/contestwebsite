@@ -19,4 +19,8 @@ module.exports = function(app) {
 	app.get('/admin', function(req, res) {
 		res.render('admin');
 	});
+	
+	app.get('/scoreboard', function(req, res) {
+		res.render('scoreboard');
+	});
 }
