@@ -11,6 +11,13 @@
     <link href="css/bootswatch.css" rel="stylesheet">
     <link href="css/font-awesome.min.css" rel="stylesheet">
 
+    <script type="text/javascript" src="libs/angular/angular.js"></script>
+    <script type="text/javascript" src="libs/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script type="text/javascript" src="libs/jquery.js"></script>
+    <script src="libs/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="js/app/login.app.js"></script>
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -18,14 +25,13 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body>
+  <body ng-app="LoginApp" ng-controller="LoginController">
   
   	<div class="spacer-top">
 	</div>
 	<div class="container">
 		<div class="row">
-			<div class="col-lg-4"></div>
-			<div class="col-lg-4">
+			<div class="col-lg-4 col-lg-offset-4">
 				<div class="panel panel-primary">
 					<div class="panel-heading">Seven Lakes Kickoff</div>
 					<div class="panel-body">
@@ -35,19 +41,19 @@
 						</ul>
 						<div class="tab-content">
 							<div class="tab-pane fade active in" id="login">
-								<form action="/api/login" method="post">
+								<form>
 									<br>
 									<label>Team #</label>
 									<div class="input-group">
 										<span class="input-group-addon"><i class="fa fa-users"></i></span>
-										<input name="teamNumber" type="text" class="form-control" placeholder="31337">
+										<input type="text" class="form-control" placeholder="31337" ng-model='team.number'>
 									</div>
 									
 									<br>
 									<label>Password</label>
 									<div class="input-group">
 										<span class="input-group-addon"><i class="fa fa-key"></i></span>
-										<input name="password" type="password" class="form-control" placeholder="">
+										<input type="password" class="form-control" placeholder="" ng-model='team.password'>
 									</div>
 									
 									<br>
@@ -56,26 +62,26 @@
 								</form>
 							</div>
 							<div class="tab-pane fade" id="register">
-								<form action="/api/register" method="post">
+								<form>
 									<br>
 									<label>Team #</label>
-									<div class="input-group">
+									<div class="input-group" ng-class="{'has-error': !schoolNames[team.number]}">
 										<span class="input-group-addon"><i class="fa fa-users"></i></span>
-										<input name="teamNumber" type="text" class="form-control" placeholder="31337">
+										<input type="number" class="form-control" placeholder="31337" ng-model='team.number'>
 									</div>
 									
 									<br>
 									<label>School</label>
 									<div class="input-group">
 										<span class="input-group-addon"><i class="fa fa-home"></i></span>
-										<input name="school" type="text" class="form-control" placeholder="Seven Lakes">
+										<input type="text" class="form-control" placeholder="" ng-value="schoolNames[team.number]" readonly>
 									</div>
 
 									<br>
 									<label>Division</label>
 									<div class="input-group">
-										<span class="input-group-addon"><i class="fa fa-bicycle"></i></span>
-										<select name="division" class="form-control">
+										<span class="input-group-addon"><i class="fa fa-bike"></i></span>
+										<select class="form-control">
 											<option value="NOV">Novice</option>
 											<option value="ADV">Advanced</option>
 										</select>
@@ -85,35 +91,36 @@
 									<label>Member 1</label>
 									<div class="input-group">
 										<span class="input-group-addon"><i class="fa fa-user"></i></span>
-										<input name="members[0]" type="text" class="form-control" placeholder="Bobby Tables">
+										<input type="text" class="form-control" placeholder="Bobby Tables" ng-model="team.member[0].name">
 									</div>
 									
 									<br>
 									<label>Member 2</label>
 									<div class="input-group">
 										<span class="input-group-addon"><i class="fa fa-user"></i></span>
-										<input name="members[1]" type="text" class="form-control" placeholder="Billy Database">
+										<input type="text" class="form-control" placeholder="Billy Database" ng-model="team.member[1].name">
 									</div>
 									
 									<br>
 									<label>Member 3</label>
 									<div class="input-group">
 										<span class="input-group-addon"><i class="fa fa-user"></i></span>
-										<input name="members[2]" type="text" class="form-control" placeholder="Samuel Schema">
+										<input type="text" class="form-control" placeholder="Samuel Schema" ng-model="team.member[2].name">
 									</div>
 									
 									<br>
 									<label>Password</label>
 									<div class="input-group">
 										<span class="input-group-addon"><i class="fa fa-key"></i></span>
-										<input name="password" type="password" class="form-control" placeholder="">
+										<input type="password" class="form-control" placeholder="" ng-model="team.password">
 									</div>
 									
 									<br>
 									<label>Confirm Password</label>
-									<div class="input-group">
+									<div class="input-group" ng-class="{'has-error': team.password != team.confirmpassword}">
 										<span class="input-group-addon"><i class="fa fa-key"></i></span>
-										<input name="cpassword" type="password" class="form-control" placeholder="">
+										<input type="password" class="form-control" placeholder="" ng-model="team.confirmpassword">
+										<p ng-show="team.password != team.confirmpassword">The passwords must match.</p>
 									</div>
 									
 									<br>
@@ -128,9 +135,5 @@
 			<div class="col-lg-4"></div>
 		</div>
 	</div>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <<script src="js/jquery-1.11.0.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
   </body>
 </html>

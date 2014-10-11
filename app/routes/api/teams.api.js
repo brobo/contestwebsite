@@ -78,6 +78,7 @@ module.exports = {
 		var team = new Team();
 
 		team.school = body.school;
+		team.divison = body.division;
 
 		team.save(function(err, updatedTeam) {
 			if (err) {
@@ -96,6 +97,7 @@ module.exports = {
 
 		test.number = body.teamNumber;
 		test.school = body.school;
+		test.division = body.division;
 
 		test.members = [];
 		for(var x = 0; x < body.members.length; x++) {
@@ -115,6 +117,8 @@ module.exports = {
 		}
 
 		test.password = body.password; // Still not sorry.
+
+		console.log(test);
 
 		Team.create(test, function(err, obj) {
 			if(err) { fail(err); return; }

@@ -24,6 +24,13 @@ module.exports = function(app) {
 		res.redirect('/login');
 	});
 
+	/*app.get('/scoreboard', function(req, res) {
+		if (req.session.teamNumber)
+			res.render('scoreboard');
+		else
+			res.redirect('/login');
+	});*/
+
 	app.get('/admin', function(req, res) {
 		if(!req.session.teamNumber || req.session.teamNumber != -1)
 			res.redirect('/login');
