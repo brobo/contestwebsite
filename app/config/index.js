@@ -1,7 +1,7 @@
 module.exports = function() {
 	return {
 		mode: 'local',
-		port: 3000,
+		port: 80,
 		db: {
 			server: 'localhost',
 			port: 27017,

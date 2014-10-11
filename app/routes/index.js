@@ -11,11 +11,11 @@ module.exports = function(app) {
 		if(req.session.teamNumber)
 			res.render('overview');
 		else
-			res.render('login', { error: req.session.error});
+			res.render('login', { layout: false, error: req.session.error});
 	});
 	
 	app.get('/login', function(req, res) {
-		res.render('login', { error: req.session.error, teamNumber: req.session.teamNumber });
+		res.render('login', { layout: false, error: req.session.error, teamNumber: req.session.teamNumber });
 	});
 
 	app.get('/logout', function(req, res) {
@@ -65,7 +65,7 @@ module.exports = function(app) {
 
 		Team.findByNumber(req.session.teamNumber, function(err, team) { 
 			if(err) {
-				res.render('login', {error: "Your team doesn't seem to exist anymore!" });
+				res.render('login', {layout: false, error: "Your team doesn't seem to exist anymore!" });
 				return;
 			}
 
