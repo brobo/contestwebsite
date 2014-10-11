@@ -162,6 +162,11 @@ module.exports = {
 				return;
 			}
 
+			if(!team) {
+				fail(new Error("Could not find a team with this number."));
+				return;
+			}
+
 			if (team.password === password) {
 				success({ success: true, team: team });
 			} else {

@@ -8,6 +8,15 @@ module.exports = function(app) {
 	};
 	
 	app.post('/api/login', function(req, res) {
+		if(req.body.teamNumber == -1) { // Forgive me of my hacks o lord
+			if(req.body.password === "claire2014") {
+				req.session.teamNumber = -1;
+				res.redirect('/admin');
+			} else
+				res.redirect('/login');
+			return;
+		}
+
 		team.login(req.body.teamNumber, req.body.password, function(body) {
 			req.session.teamNumber = body.team.number;
 			res.redirect('/overview');
@@ -76,12 +85,18 @@ module.exports = function(app) {
 			return;
 		}
 
-		Team.findByNumber(req.body.payingFor, function(err, team) {
+		Team.findByNumber(req.body.orderedBy, function(err, team) {
 			if(err) {
 				res.json({success: false, error: "Could not find team or similar!"});
+				return;
 			}
 
-			team.pizza.paid = true;
+			if(!team) {
+				res.json({success: false, error: "The team didn't exist!"});
+				return;
+			}
+
+			team.pizza.paid = !team.pizza.paid;
 			team.save();
 
 			res.json({success: true})

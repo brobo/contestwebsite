@@ -37,6 +37,17 @@ teamSchema.methods.denormalize = function(callback, recurse) {
 	var team = team.toObject();
 
 	team.submissions = [];
+	if(!team.pizza) {
+		team.pizza = { cheese: 0, pepperoni: 0, sausage: 0 };
+	}
+
+	if(!team.members) {
+		team.members = [];
+	}
+
+	for(var mem = 0; mem < team.members.length; mem++) {
+		team.members[mem].cid = team.number * 3 + mem;
+	}
 
 	function loopSubmissionAsync(finish) {
 		Submission.find({teamId: team._id }, function(err, submissions) {
@@ -73,7 +84,10 @@ teamSchema.methods.denormalize = function(callback, recurse) {
 
 		res.totalScore = res.writtenScore + res.programmingScore;
 
-		callback(team);
+		res.pizza.total = (res.pizza.cheese + res.pizza.pepperoni + res.pizza.sausage);
+		res.pizza.cost = res.pizza.total * 12;
+
+		callback(res);
 	});
 };
 

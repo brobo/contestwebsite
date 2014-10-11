@@ -23,9 +23,42 @@ module.exports = function(app) {
 
 		res.redirect('/login');
 	});
+
+	app.get('/admin', function(req, res) {
+		if(!req.session.teamNumber || req.session.teamNumber != -1)
+			res.redirect('/login');
+		else {
+			Team.find({}, function(err, basicTeams) {
+				async.map(basicTeams, function(basicTeam, callback) { 
+					basicTeam.denormalize(function(res) {
+						callback(null, res);
+					});
+				}, function(err, teams) {
+					var pizzaStats = {
+						cheese: 0,
+						pepperoni: 0,
+						sausage: 0
+					};
+
+					for(var x = 0; x < teams.length; x++)
+					{
+						if(!teams[x].pizza.paid) continue;
+						pizzaStats.cheese += teams[x].pizza.cheese;
+						pizzaStats.pepperoni = teams[x].pizza.pepperoni;
+						pizzaStats.sausage = teams[x].pizza.sausage;
+					}
+
+					pizzaStats.total = (pizzaStats.cheese + pizzaStats.pepperoni + pizzaStats.sausage);
+					pizzaStats.cost = pizzaStats.total * 12;
+
+					res.render('admin', { teams: teams, pizza: pizzaStats });
+				});
+			});
+		}
+	});
 	
 	app.get('/overview', function(req, res) {
-		if(!req.session.teamNumber) {
+		if(!req.session.teamNumber || req.session.teamNumber == -1) {
 			res.redirect('/login');
 			return;
 		}
